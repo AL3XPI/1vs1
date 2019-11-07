@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright 2018-2019 GamakCZ
  *
@@ -15,11 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 declare(strict_types=1);
-
 namespace vixikhd\onevsone\commands;
-
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginIdentifiableCommand;
@@ -28,16 +24,13 @@ use pocketmine\plugin\Plugin;
 use pocketmine\plugin\PluginBase;
 use vixikhd\onevsone\arena\Arena;
 use vixikhd\onevsone\OneVsOne;
-
 /**
  * Class OneVsOneCommand
  * @package onevsone\commands
  */
 class OneVsOneCommand extends Command implements PluginIdentifiableCommand {
-
     /** @var OneVsOne $plugin */
     protected $plugin;
-
     /**
      * OneVsOneCommand constructor.
      * @param OneVsOne $plugin
@@ -46,7 +39,6 @@ class OneVsOneCommand extends Command implements PluginIdentifiableCommand {
         $this->plugin = $plugin;
         parent::__construct("onevsone", "OneVsOne commands", \null, ["1vs1"]);
     }
-
     /**
      * @param CommandSender $sender
      * @param string $commandLabel
@@ -58,7 +50,6 @@ class OneVsOneCommand extends Command implements PluginIdentifiableCommand {
             $sender->sendMessage("§cUsage: §7/1vs1 help");
             return;
         }
-
         switch ($args[0]) {
             case "help":
                 if(!$sender->hasPermission("1vs1.cmd.help")) {
@@ -70,9 +61,9 @@ class OneVsOneCommand extends Command implements PluginIdentifiableCommand {
                     "§7/1vs1 create : Create OneVsOne arena\n".
                     "§7/1vs1 remove : Remove OneVsOne arena\n".
                     "§7/1vs1 set : Set OneVsOne arena\n".
+                    "§7/1vs1 leave : Leave a OneVsOne arena\n".
                     "§7/1vs1 arenas : Displays list of arenas\n" .
                     "§7/1vs1 join : Connect player to the random arena");
-
                 break;
             case "create":
                 if(!$sender->hasPermission("1vs1.cmd.create")) {
@@ -103,17 +94,13 @@ class OneVsOneCommand extends Command implements PluginIdentifiableCommand {
                     $sender->sendMessage("§c> Arena $args[1] was not found!");
                     break;
                 }
-
                 /** @var Arena $arena */
                 $arena = $this->plugin->arenas[$args[1]];
-
                 foreach ($arena->players as $player) {
                     $player->teleport($this->plugin->getServer()->getDefaultLevel()->getSpawnLocation());
                 }
-
                 if(is_file($file = $this->plugin->getDataFolder() . "arenas" . DIRECTORY_SEPARATOR . $args[1] . ".yml")) unlink($file);
                 unset($this->plugin->arenas[$args[1]]);
-
                 $sender->sendMessage("§a> Arena removed!");
                 break;
             case "set":
@@ -173,6 +160,17 @@ class OneVsOneCommand extends Command implements PluginIdentifiableCommand {
                 }
                 $this->plugin->joinToRandomArena($sender);
                 break;
+            case "leave":
+                if(!$sender->hasPermission("1vs1.cmd.leave")) {
+                    $sender->hasPermission("§cYou have not permissions to use this command!");
+                    break;
+                }
+                if(!$sender instanceof Player) {
+                    $sender->sendMessage("§c> This command can be used only in game!");
+                    break;
+                }
+                $this->plugin->disconnectPlayer($sender);
+                break;
             default:
                 if(!$sender->hasPermission("1vs1.cmd.help")) {
                     $sender->sendMessage("§cYou have not permissions to use this command!");
@@ -181,14 +179,11 @@ class OneVsOneCommand extends Command implements PluginIdentifiableCommand {
                 $sender->sendMessage("§cUsage: §7/1vs1 help");
                 break;
         }
-
     }
-
     /**
      * @return OneVsOne|Plugin $plugin
      */
     public function getPlugin(): Plugin {
         return $this->plugin;
     }
-
 }
