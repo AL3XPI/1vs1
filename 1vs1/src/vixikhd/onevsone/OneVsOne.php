@@ -55,10 +55,33 @@ class OneVsOne extends PluginBase implements Listener {
     /** @var int[] $setupData */
     public $setupData = [];
     
+    /** @var OneVsOne $plugin */
+    public $plugin;
+    
+    /** @var ArenaScheduler $scheduler */
+    public $scheduler;
     
     /** @var int $phase */
     public $phase = 0;
-
+    
+    /** @var array $data */
+    public $data = [];
+    
+    /** @var bool $setting */
+    public $setup = false;
+    
+    /** @var Player[] $players */
+    public $players = [];
+    
+    /** @var Player[] $toRespawn */
+    public $toRespawn = [];
+    
+    /** @var Level $level */
+    public $level = null;
+    
+    /** @var string $kit */
+    public $kit;
+    
     public function onLoad() {
         $this->dataProvider = new YamlDataProvider($this);
     }
