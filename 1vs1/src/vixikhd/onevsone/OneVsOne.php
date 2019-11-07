@@ -184,3 +184,42 @@ class OneVsOne extends PluginBase implements Listener {
         $player->sendMessage("§c> All the arenas are full!");
     }
 }
+    public function disconnectPlayer(Player $player, string $quitMsg = "", bool $death = \false) {
+        switch ($this->phase) {
+            case Arena::PHASE_LOBBY:
+                $index = "";
+                foreach ($this->players as $i => $p) {
+                    if($p->getId() == $player->getId()) {
+                        $index = $i;
+                    }
+                }
+                if($index != "") {
+                    unset($this->players[$index]);
+                }
+                break;
+            default:
+                unset($this->players[$player->getName()]);
+                break;
+        }
+
+        $player->removeAllEffects();
+
+        $player->setGamemode($this->plugin->getServer()->getDefaultGamemode());
+
+        $player->setHealth(20);
+        $player->setFood(20);
+
+        $player->getInventory()->clearAll();
+        $player->getArmorInventory()->clearAll();
+        $player->getCursorInventory()->clearAll();
+
+        $player->teleport($this->plugin->getServer()->getDefaultLevel()->getSpawnLocation());
+
+        if(!$death) {
+            $this->broadcastMessage("§a> Player {$player->getName()} left the match. §7[".count($this->players)."/{$this->data["slots"]}]");
+        }
+
+        if($quitMsg != "") {
+            $player->sendMessage("§a> $quitMsg");
+        }
+    }
