@@ -183,7 +183,6 @@ class OneVsOne extends PluginBase implements Listener {
         }
         $player->sendMessage("§c> All the arenas are full!");
     }
-}
     public function disconnectPlayer(Player $player, string $quitMsg = "", bool $death = \false) {
         switch ($this->phase) {
             case Arena::PHASE_LOBBY:
@@ -223,3 +222,4 @@ class OneVsOne extends PluginBase implements Listener {
             $player->sendMessage("§a> $quitMsg");
         }
     }
+}
