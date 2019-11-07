@@ -54,6 +54,10 @@ class OneVsOne extends PluginBase implements Listener {
 
     /** @var int[] $setupData */
     public $setupData = [];
+    
+    
+    /** @var int $phase */
+    public $phase = 0;
 
     public function onLoad() {
         $this->dataProvider = new YamlDataProvider($this);
